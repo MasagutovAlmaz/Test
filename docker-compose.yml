@@ -1,0 +1,10 @@
+services:
+  db:
+    container_name: TestPostgres
+    image: postgres:16.1-alpine
+    env_file:
+      - .env
+    ports:
+      - "3112:5432"
+    volumes:
+      - ~Test:/var/lib/postgresql/data
