@@ -2,8 +2,11 @@
 - [Installation](#installation)
 
 ## Installation
+
+```bash
 python 3.13
 pip install requirements.txt
+```
 
 ```bash
 # Example command
