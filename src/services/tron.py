@@ -12,13 +12,12 @@ def get_account_info(address: str):
         client = Tron(provider=provider)
 
         try:
-            # Асинхронный вызов
             balance = client.get_account_balance(address)
             resource = client.get_account_resource(address)
 
             return {
                 "balance": balance,
-                "bandwidth": resource.get("free_bandwidth", 0),
+                "bandwidth": resource.get("freeNetLimit", 0),
                 "energy": resource.get("EnergyLimit", 0),
             }
         except AddressNotFound:

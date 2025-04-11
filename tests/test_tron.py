@@ -13,17 +13,21 @@ client = TestClient(app)
 
 address = "TYnyEXrFS2GjZSLz3JSrJDLicJyDWS3VJw"
 
-@pytest.mark.asyncio
-async def test_tron_endpoint_integration():
-    response = client.post("/tron", json={"address": address})
+def test_check_address_data():
+    # Arrange
+    request_data = {"address": address}
 
+    # Act
+    response = client.post("/tron", json=request_data)
+
+    # Assert
     assert response.status_code == 200
     response_data = response.json()
-
-    assert "address" in response_data
+    assert response_data["address"] == address
     assert "balance" in response_data
     assert "bandwidth" in response_data
     assert "energy" in response_data
+
 
 def test_create_tron_with_all_fields():
     balance = 1000

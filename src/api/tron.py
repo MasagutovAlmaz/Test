@@ -1,40 +1,16 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.models.tron import TronAddress, Tron
+from src.models.tron import Tron
 from src.db.database import get_db
-from src.schemas.tron import TronResponse, TronRequest, TronAddressResponse
+from src.schemas.tron import TronResponse, TronRequest
 from src.services.tron import get_account_info
-from tronpy.keys import PrivateKey
 from sqlalchemy import select
 
-router = APIRouter()
+router = APIRouter(tags=["Tron"])
 
-@router.post("/tron/address", response_model=TronAddressResponse)
-async def create_address_tron(db: AsyncSession = Depends(get_db)):
-    private_key = PrivateKey.random()
-    address = private_key.public_key.to_base58check_address()
-
-    new_address = TronAddress(
-        address=address,
-        private_key=private_key.hex()
-    )
-
-    db.add(new_address)
-    try:
-        await db.commit()
-        await db.refresh(new_address)
-    except Exception as e:
-        await db.rollback()
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Ошибка при создании адреса: {str(e)}"
-        )
-    return TronAddressResponse(**new_address.__dict__)
-
-
-@router.post("/tron", response_model=TronResponse)
-async def get_tron_wallet(data: TronRequest, db: AsyncSession = Depends(get_db)):
+@router.post("/tron/address", response_model=TronResponse)
+async def check_address_data(data: TronRequest, db: AsyncSession = Depends(get_db)):
     try:
         info = get_account_info(data.address)
         stmt = select(Tron).filter(Tron.address == data.address)
